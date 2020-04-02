@@ -1,0 +1,3 @@
+brufen 12 20 3000
+paracetamol 3 30 7
+odosil 14 3 20
