@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#define my_sizeof(type) ((char )(&type+1)-(char)(&type))
+
 using namespace std;
 class Medikament
 {
@@ -11,6 +13,7 @@ private:
 	int menge;
 public:
 	bool operator< (const Medikament& other) const {return name < other.name;}
+	//bool operator< (const Medikament& other) const { return preis <= other.preis;}
 	Medikament(string nume,int concentratie,int pret,int cantitate);
 	Medikament();
 	void set_nume(string nume);
@@ -28,4 +31,8 @@ public:
 	void afisare_in_fisier_write(string nume, int concentratie, int pret, int cantitate);//afisare
 	void show_medikamente();//afiseaza dupa model
 	void delete_medicament();//sterge medicamentul
+	void Cautare(); // cautare dupa concentratie
+	void Grupare(); // Grupare medicamente dupa pret
+	void RUndo(); // Functia de asprijin pentru undo
+	void Undo(); // Functia undo
 };

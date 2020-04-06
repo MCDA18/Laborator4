@@ -6,6 +6,8 @@
 #include<algorithm>
 using namespace std;
 //constructoru implicit
+vector<Medikament> c;
+
 Medikament::Medikament()
 {
 	name = "";
@@ -101,6 +103,7 @@ void Medikament::einfugen_medikament()
 	int concentratie, pret, cantitate;
 	cout << "Ce nume doriti sa aiba medicamentul?"<<endl;
 	cin >> nume;
+	RUndo();
 	//caz in care existena medicamentul in fisier
 	if (verificare_medicament_existent(nume) == 1)
 	{
@@ -137,6 +140,7 @@ void Medikament::afisare_in_fisier_write(string nume, int concentratie, int pret
 //stergerea medicametului
 void Medikament::delete_medicament()
 {
+	RUndo();
 	string nume;
 	cout << "Ce medicament doriti sa stergeti?"<<endl;
 	cin >> nume;
@@ -180,4 +184,116 @@ void Medikament::show_medikamente()
 	//nu a gasit nimic...afiseaza mesajul
 	else
 		cout << "Nu s-a gasit nimic dupa modelul cautat!!!" << endl;
+}
+/// Cautare medicamente cu o concentratie mai mica
+void Medikament::Cautare()
+{
+	int x;
+	cout << "Dati concentratia pentru cautare: ";
+	cin >> x;
+	Medikament temp;
+	int ok = 0;
+	ifstream in("medicamente.txt", ios::in);
+	while (in >> temp.name >> temp.konzentration >> temp.preis >> temp.menge)//citeste cate un rand
+		if (x > temp.konzentration)//merge dupa model
+		{
+			ok = 1;
+			cout << temp.name <<" "<< temp.konzentration <<" "<< temp.preis <<" "<<temp.menge << "\n";
+
+		}
+	if (ok == 0)//daca ok ==0 Nu a gasit niciun element
+	{
+		cout << "Nu exista medicament dupa concetratie";
+	}
+}
+
+
+void Medikament::Grupare() {// Grupam medicamentele dupa pret
+
+	vector<Medikament> v;
+	pair <double, string> p;
+	vector<string> name = {};
+	vector<double> preis = {};
+
+	//Creez doi vectori, in care memorez numele respectiv pretul fiecarui element
+	Medikament temp;
+	ifstream in("medicamente.txt", ios::in);
+	while (in >> temp.name >> temp.konzentration >> temp.preis >> temp.menge)//citeste cate un rand
+		v.push_back(temp);//creaza un vector
+	int k = 0;
+	for (const auto& it : v)
+	{
+		name.push_back(it.name);
+		preis.push_back(it.preis);
+		k++;
+	}
+
+	/// Ordonez vectorul preis si vectorul name
+
+	for (int i = 0; i < k - 1; i++)
+	{
+		for (int j = i + 1; j < k; j++)
+		{
+			if (preis[i] > preis[j])
+			{
+				int aux = preis[i];
+				string aux1 = name[i];
+				preis[i] = preis[j];
+				preis[j] = aux;
+				name[i] = name[j];
+				name[j] = aux1;
+			}
+		}
+	}
+	//// Grupez elementele dupa pret si le afisez
+	int i = 0;
+	while (i < k)
+	{
+		cout << "Pretul: " << preis[i] << " - ";
+		int j = i;
+		while (j < k)
+		{
+			if (preis[i] == preis[j])
+			{
+				cout << name[j] << " ";
+				j++;
+			}
+			else
+				break;
+		}
+		i = j;
+		cout << endl;
+	}
+
+	/*
+	vector<Medikament> v;
+	Medikament temp;
+	ifstream in("medicamente.txt", ios::in);
+	while (in >> temp.name >> temp.konzentration >> temp.preis >> temp.menge)//citeste cate un rand
+		v.push_back(temp);//creaza un vector
+	sort(v.begin(), v.end());
+	int k = 0, nr = 0, ok = 1;
+	for (const auto& it : v) {
+		cout << it.name << " " << it.konzentration << " " << it.preis << " " << it.menge << "\n";
+	}*/
+
+}
+void Medikament::RUndo()
+{
+	Medikament temp;
+	ifstream in("medicamente.txt", ios::in);
+	while (in >> temp.name >> temp.konzentration >> temp.preis >> temp.menge)//citeste cate un rand
+		c.push_back(temp);//creaza un vector
+}
+
+void Medikament::Undo()
+{
+	vector <Medikament> l;
+	l = c;
+	ofstream trunc("medicamente.txt", ios::out);
+	for (const auto& medi : l) {
+		trunc << medi.name << ' ' << medi.konzentration << ' ' << medi.preis << ' ' << medi.menge << endl;
+	}
+	cout << "Undo/Redo a fost efecutata...verificati fisierul!" << endl;
+	c = {};
 }
